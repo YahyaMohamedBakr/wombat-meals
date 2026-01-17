@@ -1,0 +1,180 @@
+
+<div class="custom-form-wrapper">
+  <div class="custom-form-container">
+    {% if section.settings.heading != blank or section.settings.subtext != blank %}
+      <div class="custom-form-header">
+        <h2>{{ section.settings.heading }}</h2>
+        <p>{{ section.settings.subtext }}</p>
+      </div>
+    {% endif %}
+
+    {%- form 'contact', id: 'CustomDynamicForm' -%}
+      
+      {%- if form.posted_successfully? -%}
+        <div class="form-status-alert success">✅ {{ section.settings.success_message }}</div>
+      {%- elsif form.errors -%}
+        <div class="form-status-alert error">
+          <p>⚠️ Please correct the following:</p>
+          {{ form.errors | default_errors }}
+        </div>
+      {%- endif -%}
+
+      <input type="hidden" name="contact[Form_Source]" value="{{ section.settings.form_name }}">
+
+      <div class="custom-fields-grid">
+        {% for block in section.blocks %}
+          {% case block.type %}
+            
+            {% when 'separator' %}
+              <div class="custom-separator" {{ block.shopify_attributes }}>
+                <h3>{{ block.settings.title }}</h3>
+              </div>
+
+            {% when 'text_input' %}
+              <div class="custom-group {% if block.settings.full_width %}full-width{% endif %}" {{ block.shopify_attributes }}>
+                <label>{{ block.settings.label }}{% if block.settings.required %} *{% endif %}</label>
+                {%- if block.settings.input_type == 'email' -%}
+                  <input type="email" name="contact[email]" placeholder="{{ block.settings.placeholder }}" required aria-required="true" autocomplete="email">
+                {%- else -%}
+                  <input type="{{ block.settings.input_type }}" 
+                         name="contact[{{ block.settings.label | replace: ' ', '_' }}]" 
+                         placeholder="{{ block.settings.placeholder }}"
+                         {% if block.settings.required %}required{% endif %}>
+                {%- endif -%}
+              </div>
+
+            {% when 'textarea' %}
+              <div class="custom-group full-width" {{ block.shopify_attributes }}>
+                <label>{{ block.settings.label }}{% if block.settings.required %} *{% endif %}</label>
+                <textarea name="contact[body]" 
+                          rows="{{ block.settings.rows }}" 
+                          placeholder="{{ block.settings.placeholder }}"
+                          {% if block.settings.required %}required{% endif %}></textarea>
+              </div>
+
+            {% when 'dropdown' %}
+              <div class="custom-group {% if block.settings.full_width %}full-width{% endif %}" {{ block.shopify_attributes }}>
+                <label>{{ block.settings.label }}{% if block.settings.required %} *{% endif %}</label>
+                <select name="contact[{{ block.settings.label | replace: ' ', '_' }}]" {% if block.settings.required %}required{% endif %}>
+                  <option value="" disabled selected>{{ block.settings.placeholder }}</option>
+                  {% assign options = block.settings.options | split: ',' %}
+                  {% for option in options %}
+                    <option value="{{ option | strip }}">{{ option | strip }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+          {% endcase %}
+        {% endfor %}
+      </div>
+
+      <button type="submit" class="custom-form-btn">{{ section.settings.button_text }}</button>
+    {%- endform -%}
+  </div>
+</div>
+
+<style>
+
+  :root{
+
+    --separator-title-color: {{section.settings.separator_color}};
+    --separator-title-size: {{ section.settings.separator_size }}px;
+    --custom-form-button-color: {{ section.settings.button_color }};
+    --custom-form-header-title: {{section.settings.heading_title}}px;
+
+  }
+
+  input::placeholder{color:rgb(124, 124, 124) ;opacity: 1; }
+  .custom-form-wrapper { background-color: #fcfcfc; padding: 50px 20px; }
+  .custom-form-container { max-width: 800px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+  .custom-form-header { text-align: center; margin-bottom: 30px; }
+  .custom-form-header h2 { font-size: var(--custom-form-header-title); margin-bottom: 10px; color: #333; }
+  
+  .custom-fields-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px 20px; align-items: end; }
+  
+  .custom-separator { grid-column: span 2; margin-top: 25px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+  .custom-separator h3 { color: var(--separator-title-color); font-size: var(--separator-title-size) ; text-transform: uppercase; margin: 0; }
+
+  .custom-group.full-width { grid-column: span 2; }
+  .custom-group label { display: block; margin-bottom: 6px; font-weight: 600; color: #444; font-size: 0.85rem; }
+  .custom-group input, .custom-group textarea, .custom-group select { 
+    width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; box-sizing: border-box;
+  }
+
+  .form-status-alert { padding: 15px; border-radius: 6px; margin-bottom: 25px; text-align: left; font-weight: bold; }
+  .form-status-alert.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; text-align: center; }
+  .form-status-alert.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+  .form-status-alert.error ul { margin: 5px 0 0 20px; padding: 0; list-style: disc; }
+
+  .custom-form-btn { 
+    width: 100%; background:var(--custom-form-button-color); color: #fff; border: none; padding: 16px; 
+    font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 30px; font-size: 1.1rem;
+  }
+  
+  @media (max-width: 768px) { 
+    .custom-fields-grid { grid-template-columns: 1fr; } 
+    .custom-group.full-width, .custom-separator { grid-column: span 1; } 
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Custom Contact Form",
+  "settings": [
+    { "type": "text", "id": "form_name", "label": "Internal Form Name", "default": "General Inquiry" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Contact Us" },
+    { "type": "range", "id": "heading_title", "label": "Heading title Font Size", "min": 8, "max": 80, "step": 2, "default": 32 },
+    { "type": "color", "id": "separator_color", "label": "Separator Color", "default": "#ff840b" },
+    { "type": "range", "id": "separator_size", "label": "Separator Font Size", "min": 8, "max": 80, "step": 2, "default": 16 },
+    { "type": "textarea", "id": "subtext", "label": "Subtext" },
+    { "type": "text", "id": "button_text", "label": "Button Label", "default": "SUBMIT" },
+    { "type": "color", "id": "button_color", "label": "Button Color", "default": "#ff840b" },
+    { "type": "text", "id": "success_message", "label": "Success Message", "default": "Message sent successfully!" }
+  ],
+  "blocks": [
+    {
+      "type": "separator",
+      "name": "Section Separator",
+      "settings": [ { "type": "text", "id": "title", "label": "Title", "default": "Section Name" } ]
+    },
+    {
+      "type": "text_input",
+      "name": "Input Field",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Field Label", "default": "First Name" },
+        { "type": "text", "id": "placeholder", "label": "Placeholder" },
+        { "type": "select", "id": "input_type", "label": "Type", 
+          "options": [
+            { "value": "text", "label": "Text" },
+            { "value": "email", "label": "Email" },
+            { "value": "tel", "label": "Phone" }
+          ], "default": "text" },
+        { "type": "checkbox", "id": "required", "label": "Required?", "default": true },
+        { "type": "checkbox", "id": "full_width", "label": "Full Width?", "default": false }
+      ]
+    },
+    {
+      "type": "textarea",
+      "name": "Message Area",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "Your Message" },
+        { "type": "text", "id": "placeholder", "label": "Placeholder" },
+        { "type": "range", "id": "rows", "min": 2, "max": 10, "step": 1, "label": "Rows", "default": 4 },
+        { "type": "checkbox", "id": "required", "label": "Required?", "default": true }
+      ]
+    },
+    {
+      "type": "dropdown",
+      "name": "Dropdown Menu",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "Option" },
+        { "type": "text", "id": "placeholder", "label": "Placeholder", "default": "Select..." },
+        { "type": "textarea", "id": "options", "label": "Options (Comma separated)", "default": "Choice 1, Choice 2" },
+        { "type": "checkbox", "id": "full_width", "label": "Full Width?", "default": false },
+        { "type": "checkbox", "id": "required", "label": "Required?", "default": true }
+      ]
+    }
+  ],
+  "presets": [ { "name": "Custom Contact Form" } ]
+}
+{% endschema %}

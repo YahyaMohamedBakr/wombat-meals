@@ -1,0 +1,200 @@
+<div class="anatomy-{{ section.id }} anatomy-wrapper" style="background-color: {{ section.settings.bg_color }};">
+  <div class="anatomy-container" style="max-width: {{ section.settings.content_width }}px;">
+    
+    <div class="anatomy-header">
+      {% if section.settings.sub_title != blank %}
+        <span class="anatomy-sub" style="color: {{ section.settings.sub_title_color }}; font-size: {{ section.settings.sub_title_size }}px;">
+          {{ section.settings.sub_title }}
+        </span>
+      {% endif %}
+      {% if section.settings.title != blank %}
+        <h2 class="anatomy-main-title" style="color: {{ section.settings.title_color }}; font-size: {{ section.settings.title_size }}px;">
+          {{ section.settings.title }}
+        </h2>
+      {% endif %}
+      {% if section.settings.desc != blank %}
+        <p class="anatomy-desc" style="color: {{ section.settings.desc_color }}; font-size: {{ section.settings.desc_size }}px;">
+          {{ section.settings.desc }}
+        </p>
+      {% endif %}
+    </div>
+
+    <div class="anatomy-grid {% unless section.settings.show_image %}no-image-grid{% endunless %}">
+      
+      <div class="anatomy-col side-features">
+        {% for block in section.blocks %}
+          {% if block.type == 'feature_left' %}
+            <div class="feature-item align-{{ block.settings.icon_position }}" {{ block.shopify_attributes }}>
+              <div class="feature-text">
+                <h4 style="color: {{ block.settings.item_title_color | default: section.settings.block_title_color }}; font-size: {{ block.settings.item_title_size | default: section.settings.block_title_size }}px;">
+                  {{ block.settings.title }}
+                </h4>
+                <p style="color: {{ block.settings.item_text_color | default: section.settings.block_text_color }}; font-size: {{ block.settings.item_text_size | default: section.settings.block_text_size }}px;">
+                  {{ block.settings.text }}
+                </p>
+              </div>
+              <div class="feature-icon" style="fill: {{ block.settings.item_icon_color | default: section.settings.icon_color }}; width: {{ section.settings.icon_size | default: section.settings.icon_size_global }}px;">
+                {{ block.settings.svg_icon }}
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      {% if section.settings.show_image %}
+      <div class="anatomy-col main-image">
+        {% if section.settings.center_image != blank %}
+          <img src="{{ section.settings.center_image | image_url: width: 800 }}" alt="Product Image">
+        {% else %}
+          {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <div class="anatomy-col side-features">
+        {% for block in section.blocks %}
+          {% if block.type == 'feature_right' %}
+            <div class="feature-item align-{{ block.settings.icon_position }}" {{ block.shopify_attributes }}>
+              <div class="feature-icon" style="fill: {{ block.settings.item_icon_color | default: section.settings.icon_color }}; width: {{ section.settings.icon_size | default: section.settings.icon_size_global }}px;">
+                {{ block.settings.svg_icon }}
+              </div>
+              <div class="feature-text">
+                <h4 style="color: {{ block.settings.item_title_color | default: section.settings.block_title_color }}; font-size: {{ block.settings.item_title_size | default: section.settings.block_title_size }}px;">
+                  {{ block.settings.title }}
+                </h4>
+                <p style="color: {{ block.settings.item_text_color | default: section.settings.block_text_color }}; font-size: {{ block.settings.item_text_size | default: section.settings.block_text_size }}px;">
+                  {{ block.settings.text }}
+                </p>
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="anatomy-buttons">
+      <a href="{{ section.settings.btn1_link }}" class="btn-primary-custom-{{ section.id }}">{{ section.settings.btn1_label }}</a>
+      <a href="{{ section.settings.btn2_link }}" class="btn-secondary-custom-{{ section.id }}">{{ section.settings.btn2_label }}</a>
+    </div>
+
+  </div>
+</div>
+
+<style>
+  .anatomy-{{ section.id }} { padding: {{ section.settings.padding_v }}px 0; overflow: hidden; }
+  .anatomy-container { margin: 0 auto; padding: 0 20px; width: 100%; }
+  
+  .anatomy-header { text-align: center; margin-bottom: 50px; }
+  .anatomy-sub { text-transform: uppercase; font-weight: bold; display: block; margin-bottom: 10px; }
+  .anatomy-main-title { margin: 0 0 15px; font-weight: bold; line-height: 1.1; }
+  
+  .anatomy-grid { display: grid; grid-template-columns: 1fr 1.2fr 1fr; gap: 40px; align-items: center; }
+  .anatomy-grid.no-image-grid { grid-template-columns: 1fr 1fr; }
+  
+  .feature-item { display: flex; align-items: flex-start; margin-bottom: 35px; gap: 20px; }
+  
+  .feature-item.align-right { flex-direction: row; text-align: left; }
+  .feature-item.align-left { flex-direction: row-reverse; text-align: right; }
+  
+  .feature-item h4 { margin: 0 0 8px; font-weight: 600; line-height: 1.2; }
+  .feature-item p { margin: 0; line-height: 1.5; }
+  .feature-icon { flex-shrink: 0; }
+  .feature-icon svg { width: 100%; height: auto; display: block; }
+  
+  .main-image img { width: 100%; height: auto; }
+  
+  .anatomy-buttons { display: flex; justify-content: center; gap: 15px; margin-top: 50px; flex-wrap: wrap; }
+  .btn-primary-custom-{{ section.id }}, .btn-secondary-custom-{{ section.id }} { 
+    padding: 14px 40px; border-radius: {{ section.settings.btn_radius }}px; text-decoration: none; font-weight: bold; transition: 0.3s;
+  }
+  .btn-primary-custom-{{ section.id }} { background: {{ section.settings.btn1_bg }}; color: {{ section.settings.btn1_text_color }}; }
+  .btn-secondary-custom-{{ section.id }} { background: {{ section.settings.btn2_bg }}; color: {{ section.settings.btn2_text_color }}; }
+
+  @media screen and (max-width: 990px) {
+    .anatomy-grid, .anatomy-grid.no-image-grid { grid-template-columns: 1fr; gap: 30px; }
+    .feature-item.align-left, .feature-item.align-right { flex-direction: row-reverse; text-align: left; }
+    .main-image { order: -1; }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Ultimate Anatomy 1200px",
+  "settings": [
+    { "type": "range", "id": "content_width", "label": "Content Container Width", "min": 800, "max": 1600, "step": 10, "default": 1200, "unit": "px" },
+    { "type": "color", "id": "bg_color", "label": "Section Background", "default": "#ffffff" },
+    { "type": "range", "id": "padding_v", "label": "Vertical Spacing", "min": 0, "max": 150, "step": 5, "default": 80 },
+    { "type": "checkbox", "id": "show_image", "label": "Show Center Image", "default": true },
+    { "type": "image_picker", "id": "center_image", "label": "Center Image" },
+    { "type": "header", "content": "Headings Styles" },
+    { "type": "text", "id": "sub_title", "label": "Sub-title", "default": "Special Features" },
+    { "type": "color", "id": "sub_title_color", "label": "Sub-title Color", "default": "#2ecc71" },
+    { "type": "range", "id": "sub_title_size", "label": "Sub-title Font Size", "min": 10, "max": 40, "default": 14 },
+    { "type": "text", "id": "title", "label": "Heading", "default": "Product Highlights" },
+    { "type": "color", "id": "title_color", "label": "Heading Color", "default": "#111111" },
+    { "type": "range", "id": "title_size", "label": "Heading Font Size", "min": 20, "max": 80, "default": 45 },
+    { "type": "textarea", "id": "desc", "label": "Description" },
+    { "type": "color", "id": "desc_color", "label": "Description Color", "default": "#666666" },
+    { "type": "header", "content": "Global Item Defaults" },
+    { "type": "color", "id": "icon_color", "label": "Icon Color", "default": "#2ecc71" },
+    { "type": "range", "id": "icon_size_global", "label": "Icon Size", "min": 20, "max": 80, "default": 40 },
+    { "type": "color", "id": "block_title_color", "label": "Item Title Color", "default": "#111111" },
+    { "type": "range", "id": "block_title_size", "label": "Item Title Size", "min": 14, "max": 40, "default": 22 },
+    { "type": "color", "id": "block_text_color", "label": "Item Text Color", "default": "#555555" },
+    { "type": "range", "id": "block_text_size", "label": "Item Text Size", "min": 10, "max": 24, "default": 16 },
+    { "type": "header", "content": "Buttons" },
+    { "type": "range", "id": "btn_radius", "label": "Button Corners", "min": 0, "max": 50, "default": 5 },
+    { "type": "text", "id": "btn1_label", "label": "Btn 1", "default": "Buy Now" },
+    { "type": "color", "id": "btn1_bg", "label": "Btn 1 BG", "default": "#000000" },
+    { "type": "color", "id": "btn1_text_color", "label": "Btn 1 Text", "default": "#ffffff" },
+    { "type": "url", "id": "btn1_link", "label": "Btn 1 Link" },
+    { "type": "text", "id": "btn2_label", "label": "Btn 2", "default": "Learn More" },
+    { "type": "color", "id": "btn2_bg", "label": "Btn 2 BG", "default": "#2ecc71" },
+    { "type": "color", "id": "btn2_text_color", "label": "Btn 2 Text", "default": "#ffffff" },
+    { "type": "url", "id": "btn2_link", "label": "Btn 2 Link" }
+  ],
+  "blocks": [
+    {
+      "type": "feature_left",
+      "name": "Left Feature",
+      "settings": [
+        { "type": "textarea", "id": "svg_icon", "label": "SVG Code" },
+        { "type": "select", "id": "icon_position", "label": "Icon Side", "options": [
+            { "value": "right", "label": "Icon on Right" },
+            { "value": "left", "label": "Icon on Left" }
+          ], "default": "left" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Feature" },
+        { "type": "textarea", "id": "text", "label": "Description", "default": "Description details." },
+        { "type": "header", "content": "Custom Override" },
+        { "type": "color", "id": "item_title_color", "label": "Title Color" },
+        { "type": "range", "id": "item_title_size", "label": "Title Size", "min": 10, "max": 50, "default": 22 },
+        { "type": "color", "id": "item_text_color", "label": "Text Color" },
+        { "type": "range", "id": "item_text_size", "label": "Text Size", "min": 10, "max": 30, "default": 16 },
+        { "type": "color", "id": "item_icon_color", "label": "Icon Color" },
+        { "type": "range", "id": "icon_size", "label": "Icon Size", "min": 10, "max": 100, "default": 40 }
+      ]
+    },
+    {
+      "type": "feature_right",
+      "name": "Right Feature",
+      "settings": [
+        { "type": "textarea", "id": "svg_icon", "label": "SVG Code" },
+        { "type": "select", "id": "icon_position", "label": "Icon Side", "options": [
+            { "value": "right", "label": "Icon on Right" },
+            { "value": "left", "label": "Icon on Left" }
+          ], "default": "right" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Feature" },
+        { "type": "textarea", "id": "text", "label": "Description", "default": "Description details." },
+        { "type": "header", "content": "Custom Override" },
+        { "type": "color", "id": "item_title_color", "label": "Title Color" },
+        { "type": "range", "id": "item_title_size", "label": "Title Size", "min": 10, "max": 50, "default": 22 },
+        { "type": "color", "id": "item_text_color", "label": "Text Color" },
+        { "type": "range", "id": "item_text_size", "label": "Text Size", "min": 10, "max": 30, "default": 16 },
+        { "type": "color", "id": "item_icon_color", "label": "Icon Color" },
+        { "type": "range", "id": "icon_size", "label": "Icon Size", "min": 10, "max": 100, "default": 40 }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Ultimate Anatomy 1200px" }]
+}
+{% endschema %}

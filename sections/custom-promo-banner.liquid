@@ -1,0 +1,165 @@
+{%- style -%}
+  .promo-{{ section.id }} { 
+    padding: {{ section.settings.padding_v }}px 0; 
+    background-color: {{ section.settings.section_bg }};
+  }
+  
+  .promo-wrapper-inner-{{ section.id }} {
+    position: relative;
+    width: 100%;
+    max-width: {% if section.settings.banner_full_width %} 100% {% else %} {{ section.settings.content_width }}px {% endif %};
+    margin: 0 auto;
+    overflow: hidden;
+    min-height: {{ section.settings.min_height }}px;
+    display: flex;
+    align-items: center;
+    border-radius: {{ section.settings.border_radius }}px;
+    background-image: url('{{ section.settings.bg_image | image_url: width: 2000 }}');
+    background-size: {{ section.settings.bg_size }};
+    background-position: {% if section.settings.bg_position == 'custom' %} {{ section.settings.custom_x }}% {{ section.settings.custom_y }}% {% else %} {{ section.settings.bg_position }} {% endif %};
+    background-repeat: no-repeat;
+  }
+
+  .promo-container-fixed-{{ section.id }} {
+    max-width: {{ section.settings.content_width }}px;
+    margin: 0 auto;
+    padding: 0 40px;
+    width: 100%;
+    position: relative;
+    z-index: 3;
+    display: flex;
+    justify-content: {{ section.settings.flex_align }};
+  }
+  
+  .promo-overlay-layer {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 1;
+    background: {{ section.settings.overlay_color }};
+    opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+  }
+  
+  .promo-flex-box-{{ section.id }} {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    gap: 40px;
+    width: 100%;
+    max-width: {{ section.settings.flex_max_width }}px;
+  }
+  
+  .promo-texts { flex: 1; text-align: left; }
+  .promo-actions { flex: 0 0 auto; }
+
+  .promo-btn-{{ section.id }} {
+    background: {{ section.settings.btn_bg }};
+    color: {{ section.settings.btn_text_color }};
+    padding: {{ section.settings.btn_padding_v }}px {{ section.settings.btn_padding_h }}px;
+    border-radius: {{ section.settings.btn_radius }}px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: {{ section.settings.btn_size }}px;
+    transition: 0.3s ease;
+    white-space: nowrap;
+    display: inline-block;
+  }
+
+  @media screen and (max-width: 768px) {
+    .promo-flex-box-{{ section.id }} { flex-direction: column; text-align: center; max-width: 100%; }
+    .promo-texts { text-align: center; }
+    .promo-container-fixed-{{ section.id }} { padding: 40px 20px; justify-content: center; }
+  }
+{%- endstyle -%}
+
+<div class="promo-{{ section.id }}">
+  <div class="promo-wrapper-inner-{{ section.id }}">
+    <div class="promo-overlay-layer"></div>
+    
+    <div class="promo-container-fixed-{{ section.id }}">
+      <div class="promo-flex-box-{{ section.id }}">
+        
+        <div class="promo-texts">
+          {% if section.settings.sub_title != blank %}
+            <span class="promo-sub" style="color: {{ section.settings.sub_title_color }}; font-size: {{ section.settings.sub_title_size }}px; display: block; margin-bottom: 10px; font-weight: bold;">
+              {{ section.settings.sub_title }}
+            </span>
+          {% endif %}
+          <h2 class="promo-title" style="color: {{ section.settings.title_color }}; font-size: {{ section.settings.title_size }}px; margin: 0 0 15px; font-weight: bold; line-height: 1.2;">
+            {{ section.settings.title }}
+          </h2>
+          <p class="promo-desc" style="color: {{ section.settings.desc_color }}; font-size: {{ section.settings.desc_size }}px; margin: 0;">
+            {{ section.settings.desc }}
+          </p>
+        </div>
+
+        <div class="promo-actions">
+          <a href="{{ section.settings.btn_link }}" class="promo-btn-{{ section.id }}">
+            {{ section.settings.btn_label }}
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Promo Banner Pro V2",
+  "settings": [
+    { "type": "header", "content": "Layout Logic" },
+    { "type": "checkbox", "id": "banner_full_width", "label": "Full Width Banner Background", "default": true },
+    { "type": "range", "id": "content_width", "label": "Max Content Width (px)", "min": 800, "max": 1600, "step": 10, "default": 1200 },
+    { "type": "header", "content": "Columns Position & Distance" },
+    { "type": "select", "id": "flex_align", "label": "Whole Block Position", "options": [
+        { "value": "flex-start", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "flex-end", "label": "Right" }
+      ], "default": "center" },
+    { "type": "range", "id": "flex_max_width", "label": "Distance Between Columns", "min": 300, "max": 1400, "step": 20, "default": 1000 },
+    { "type": "color", "id": "section_bg", "label": "Outer Background", "default": "#ffffff" },
+    { "type": "range", "id": "padding_v", "label": "Section Vertical Spacing", "min": 0, "max": 100, "default": 40 },
+    { "type": "header", "content": "Background Image Controls" },
+    { "type": "image_picker", "id": "bg_image", "label": "Banner Image" },
+    { "type": "select", "id": "bg_size", "label": "Image Size", "options": [
+        { "value": "cover", "label": "Cover (Fill)" },
+        { "value": "contain", "label": "Contain (Show all)" },
+        { "value": "100% 100%", "label": "Stretch" }
+      ], "default": "cover" },
+    { "type": "select", "id": "bg_position", "label": "Image Position Mode", "options": [
+        { "value": "center center", "label": "Center" },
+        { "value": "left center", "label": "Left" },
+        { "value": "right center", "label": "Right" },
+        { "value": "custom", "label": "Custom (Use Sliders Below)" }
+      ], "default": "center center" },
+    { "type": "range", "id": "custom_x", "label": "Custom X Position (Horizontal)", "min": 0, "max": 100, "step": 1, "default": 50, "unit": "%" },
+    { "type": "range", "id": "custom_y", "label": "Custom Y Position (Vertical)", "min": 0, "max": 100, "step": 1, "default": 50, "unit": "%" },
+    { "type": "color", "id": "overlay_color", "label": "Overlay Color", "default": "#000000" },
+    { "type": "range", "id": "overlay_opacity", "label": "Overlay Opacity", "min": 0, "max": 100, "default": 40 },
+    { "type": "header", "content": "Dimensions (Height)" },
+    { "type": "range", "id": "min_height", "label": "Desktop Height", "min": 100, "max": 1000, "step": 10, "default": 400 },
+    { "type": "range", "id": "min_height_mobile", "label": "Mobile Height", "min": 100, "max": 800, "step": 10, "default": 300 },
+    { "type": "range", "id": "border_radius", "label": "Corners", "min": 0, "max": 100, "default": 0 },
+    { "type": "header", "content": "Typography & Colors" },
+    { "type": "text", "id": "sub_title", "label": "Sub-title", "default": "Limited Offer" },
+    { "type": "color", "id": "sub_title_color", "label": "Sub-title Color", "default": "#2ecc71" },
+    { "type": "range", "id": "sub_title_size", "label": "Sub-title Size", "min": 10, "max": 40, "default": 16 },
+    { "type": "text", "id": "title", "label": "Main Title", "default": "Exclusive Deal" },
+    { "type": "color", "id": "title_color", "label": "Title Color", "default": "#ffffff" },
+    { "type": "range", "id": "title_size", "label": "Title Size", "min": 20, "max": 100, "default": 42 },
+    { "type": "textarea", "id": "desc", "label": "Description" },
+    { "type": "color", "id": "desc_color", "label": "Description Color", "default": "#ffffff" },
+    { "type": "range", "id": "desc_size", "label": "Description Size", "min": 12, "max": 30, "default": 18 },
+    { "type": "header", "content": "Button Style" },
+    { "type": "text", "id": "btn_label", "label": "Button Label", "default": "Explore Now" },
+    { "type": "url", "id": "btn_link", "label": "Button Link" },
+    { "type": "color", "id": "btn_bg", "label": "Button BG", "default": "#ffffff" },
+    { "type": "color", "id": "btn_text_color", "label": "Button Text", "default": "#000000" },
+    { "type": "range", "id": "btn_size", "label": "Font Size", "min": 12, "max": 30, "default": 18 },
+    { "type": "range", "id": "btn_radius", "label": "Corners", "min": 0, "max": 50, "default": 4 },
+    { "type": "range", "id": "btn_padding_v", "label": "V-Padding", "min": 5, "max": 40, "default": 15 },
+    { "type": "range", "id": "btn_padding_h", "label": "H-Padding", "min": 10, "max": 100, "default": 45 }
+  ],
+  "presets": [{ "name": "Promo Banner Pro V2" }]
+}
+{% endschema %}

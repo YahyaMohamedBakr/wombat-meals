@@ -1,0 +1,402 @@
+<div class="catering-outer-wrapper">
+  <div class="page-width catering-p ">
+      <h2 class="main-section-title">Catering</h2>
+
+    <div class="catering-main-grid">
+      {%- comment -%} Left Part - Food menu {%- endcomment -%}
+      <div class="catering-menu-list">
+        {% form 'contact', id: 'CateringForm' %}
+          {%- if form.posted_successfully? -%}
+            <span id="LiquidSuccessTrigger" style="display:none;"></span>
+          {%- endif -%}
+
+          {% for block in section.blocks %}
+            {% case block.type %}
+              {% when 'category' %}
+                <div class="cat-banner" {{ block.shopify_attributes }}>
+                  <h2>{{ block.settings.title }}</h2>
+                </div>
+
+              {% when 'product' %}
+                <div class="catering-item-row" {{ block.shopify_attributes }}>
+                  <div class="item-header">
+                    <h3>{{ block.settings.product_name }}</h3>
+                    {% if block.settings.description != blank %}
+                      <p class="item-desc-main">{{ block.settings.description }}</p>
+                    {% endif %}
+                  </div>
+                  
+                  <div class="item-options-grid">
+                    <div class="option-col" data-price="{{ block.settings.price_1 }}">
+                      <label>{{ block.settings.size_1_label }} <span class="price">({{ block.settings.price_1 | money }})</span></label>
+                      {% if block.settings.size_1_desc != blank %}
+                        <p class="size-specific-desc">{{ block.settings.size_1_desc }}</p>
+                      {% endif %}
+                      <input type="number" class="qty-input-field" min="0" value="0" placeholder="0">
+                    </div>
+
+                    {% if block.settings.price_2 > 0 %}
+                    <div class="option-col" data-price="{{ block.settings.price_2 }}">
+                      <label>{{ block.settings.size_2_label }} <span class="price">({{ block.settings.price_2 | money }})</span></label>
+                      {% if block.settings.size_2_desc != blank %}
+                        <p class="size-specific-desc">{{ block.settings.size_2_desc }}</p>
+                      {% endif %}
+                      <input type="number" class="qty-input-field" min="0" value="0" placeholder="0">
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+            {% endcase %}
+          {% endfor %}
+          
+          <input type="hidden" name="contact[body]" id="ContactForm-body-hidden">
+          <input type="hidden" name="contact[estimated_total]" id="hidden-total-field" value="$0.00">
+          <input type="hidden" name="contact[email]" id="HiddenEmailField">
+        {% endform %}
+      </div>
+
+      {%- comment -%} Sidebar {%- endcomment -%}
+      <div class="catering-sidebar">
+        <div class="sidebar-sticky-card">
+          <h2 class="sidebar-title">Your Details</h2>
+          <p class="sidebar-note" style="text-align: center; color: #777; font-size: 0.85rem; margin-bottom: 20px;">
+            This is only a Quote Form. Once it is filled, we will get back to you ASAP.
+          </p>
+          
+          <div id="StatusDisplay">
+            <div id="SuccessAlert" class="status-alert success-msg" style="display:none;">
+               <strong>✓ Success!</strong> Your quote request has been sent. We will contact you shortly.
+            </div>
+            {%- if form.errors -%}
+              <div class="status-alert error-box">
+                <strong>× Error!</strong> Please check your details and try again.
+              </div>
+            {%- endif -%}
+          </div>
+
+          <div class="details-form-fields">
+             <div class="field-group">
+               <input type="text" id="CateringName" placeholder="Full Name *">
+               <span class="error-msg">Name is required</span>
+             </div>
+
+             <div class="field-group">
+               <input type="email" id="CateringEmail" placeholder="Email Address *">
+               <span class="error-msg">Valid email is required</span>
+             </div>
+
+             <div class="field-group">
+               <input type="tel" id="CateringPhone" placeholder="Phone Number *">
+               <span class="error-msg">Phone is required</span>
+             </div>
+
+             <div class="field-group">
+               <input type="text" id="CateringAddress" placeholder="Delivery Address *">
+               <span class="error-msg">Address is required</span>
+             </div>
+             
+             <div class="field-group">
+               <label style="display:block; margin-bottom:5px; font-size:0.85rem; color:#666; font-weight:bold;">Preferred Delivery Date: *</label>
+               <input type="date" id="CateringDate">
+               <span class="error-msg">Please select a date</span>
+             </div>
+             
+             <textarea id="CateringComments" placeholder="Comments / Special Requests (Optional)" rows="4"></textarea>
+             
+             <div class="minimum-spend-notice" id="MinSpendNotice" style="display:none;">
+                 $1,000 minimum spend required
+             </div>
+
+             <div class="live-total-box">
+               <span>Estimated Total</span>
+               <strong id="display-total">$0.00</strong>
+             </div>
+             
+             <button type="button" id="ManualSubmitBtn" class="catering-submit-btn">SUBMIT QUOTE</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="global-floating-bar" id="globalFloatingBar">
+    <div class="floating-flex">
+      <div class="floating-info">
+        <div id="FloatingMinNotice" style="font-size: 0.7rem; color: #d93025; font-weight: bold; display:none;"> $1,000 MIN SPEND</div>
+        <small>Estimated Total</small>
+        <strong id="floating-display-total">$0.00</strong>
+      </div>
+      <button type="button" class="floating-scroll-btn" onclick="document.querySelector('.catering-sidebar').scrollIntoView({behavior: 'smooth'});">
+        COMPLETE YOUR QUOTE
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+  :root {
+    --catering-main-color: {{ section.settings.primary_color }};
+    --catering-secondary-color: {{ section.settings.secondary_color }};
+    --catering-bg-outer: {{ section.settings.outer_bg }};
+    --catering-card-bg: {{ section.settings.card_bg }};
+    --catering-text-title: {{ section.settings.text_title_color }};
+    --catering-price:{{ section.settings.price_color }};
+    --catering-text-body: {{ section.settings.text_body_color }};
+    --catering-border-radius: {{ section.settings.border_radius }}px;
+  }
+
+  
+  .main-section-title { 
+    font-size: {{ section.settings.main_title_size }}px; 
+    margin-bottom: 10px; 
+    color: var(--catering-text-title); 
+    text-align: {{ section.settings.main_title_align }};
+  }
+
+  .minimum-spend-notice {
+    background: #fff0f0;
+    color: #d93025;
+    padding: 10px;
+    border-radius: var(--catering-border-radius);
+    font-size: 0.85rem;
+    font-weight: bold;
+    text-align: center;
+    border: 1px solid #ffdada;
+    margin-top: 15px;
+  }
+  .catering-submit-btn:disabled {
+    background-color: #ccc !important;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+  .status-alert { padding: 15px; border-radius: var(--catering-border-radius); margin-bottom: 20px; text-align: center; font-size: 0.9rem; line-height: 1.4; }
+  .success-msg { background-color: #e6f4ea; color: #1e7e34; border: 1px solid #c3e6cb; }
+  .error-box { background-color: #fce8e6; color: #d93025; border: 1px solid #f5c6cb; }
+  .field-group { margin-bottom: 12px; position: relative; }
+  .field-group input { margin-bottom: 0 !important; }
+  .error-msg { color: #d93025; font-size: 0.75rem; display: none; margin-top: 4px; font-weight: 500; }
+  input.invalid { border-color: #d93025 !important; background-color: #fff8f8; }
+  input.invalid + .error-msg { display: block; }
+  
+  .catering-outer-wrapper { background-color: var(--catering-bg-outer); padding: {{ section.settings.padding_v }}px 0; position: relative; }
+  .catering-main-grid { display: grid; grid-template-columns: 1fr 380px; gap: 40px; align-items: start; }
+  
+  .cat-banner { background: var(--catering-secondary-color); color: #fff; padding: 12px 20px; margin: 40px 0 20px; border-radius: var(--catering-border-radius); }
+  .cat-banner h2 { margin: 0; font-size: 1.4rem; letter-spacing: 1px; text-transform: uppercase; color: #fff; }
+  
+  .catering-item-row { background: var(--catering-card-bg); border: 1px solid #eee; margin-bottom: 25px; border-radius: var(--catering-border-radius); overflow: hidden; }
+  .item-header { background-color: #f7f7f7; padding: 15px 25px; border-bottom: 1px solid #eee; }
+  .item-header h3 { margin: 0; font-size: 1.25rem; color: var(--catering-text-title); text-transform: uppercase; letter-spacing: 0.5px; }
+  .item-desc-main { margin: 5px 0 0 0; font-size: 0.85rem; color: var(--catering-text-body); opacity: 0.8; }
+  
+  .item-options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 25px; }
+  .option-col { display: flex; flex-direction: column; gap: 5px; }
+  .option-col label { font-size: 0.9rem; font-weight: 700; color: var(--catering-text-title); }
+  .option-col label span { color: var(--catering-main-color); margin-left: 5px; }
+  .size-specific-desc { margin: 0 0 10px 0; font-size: 0.8rem; color: var(--catering-text-body); font-style: italic; line-height: 1.2; }
+  .qty-input-field { border: 1px solid #ddd; padding: 10px; border-radius: 4px; width: 100%; text-align: center; font-weight: bold; }
+  
+  .sidebar-sticky-card { position: sticky; top: 20px; background: var(--catering-card-bg); border: 1px solid #e0e0e0; padding: 30px; border-radius: var(--catering-border-radius); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+  .sidebar-title { margin: 0 0 10px; font-size: 1.5rem; text-align: center; color: var(--catering-text-title); }
+  .details-form-fields input, .details-form-fields textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; box-sizing: border-box; }
+  
+  .live-total-box { margin-top: 20px; padding-top: 20px; border-top: 2px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+  .live-total-box strong { font-size: 1.6rem; color: var(--catering-main-color); }
+  
+  .catering-submit-btn { width: 100%; background: var(--catering-main-color); color: #fff; border: none; padding: 18px; font-weight: 700; cursor: pointer; border-radius: 4px; margin-top: 20px; transition: 0.3s; }
+  .catering-submit-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+
+  .global-floating-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #ffffff; box-shadow: 0 -5px 30px rgba(0,0,0,0.12); padding: 15px 5%; z-index: 9999; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); }
+  .global-floating-bar.is-active { transform: translateY(0); }
+  .floating-flex { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; }
+  .floating-info small { display: block; font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+  .floating-info strong { font-size: 1.8rem; color: var(--catering-main-color); }
+  .floating-scroll-btn { background: var(--catering-main-color); color: #fff; border: none; padding: 14px 28px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+  .floating-scroll-btn:hover { background: var(--catering-secondary-color); transform: translateY(-2px); }
+
+  .catering-outer-wrapper { padding: {{ section.settings.padding_v }}px {{ section.settings.padding_h }}px; }
+
+  @media (max-width: 990px) {
+    .catering-outer-wrapper { padding: 20px 15px; }
+    .catering-main-grid { display: flex; flex-direction: column; }
+    .catering-menu-list { order: 1; }
+    .catering-sidebar { order: 2; margin-top: 40px; }
+    .item-options-grid { grid-template-columns: 1fr; }
+  }
+
+  .price{
+    color: var(--catering-price) !important ;
+  }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('CateringForm');
+  const submitBtn = document.getElementById('ManualSubmitBtn');
+  const MIN_SPEND_CENTS = 100000; // $1,000.00
+
+  function updateFormStatus(totalCents) {
+    const minNotice = document.getElementById('MinSpendNotice');
+    const floatNotice = document.getElementById('FloatingMinNotice');
+    
+    if (totalCents === 0) {
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'SELECT ITEMS TO START';
+      minNotice.style.display = 'none';
+      floatNotice.style.display = 'none';
+    } 
+    else if (totalCents < MIN_SPEND_CENTS) {
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'MINIMUM $1,000 REQUIRED';
+      minNotice.style.display = 'block';
+      floatNotice.style.display = 'block';
+    } 
+    else {
+      submitBtn.disabled = false;
+      submitBtn.innerText = 'SUBMIT QUOTE';
+      minNotice.style.display = 'none';
+      floatNotice.style.display = 'none';
+    }
+  }
+
+  updateFormStatus(0);
+
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has('contact_posted') || document.getElementById('LiquidSuccessTrigger')) {
+    const successBox = document.getElementById('SuccessAlert');
+    if (successBox) {
+      successBox.style.display = 'block';
+      setTimeout(() => {
+        successBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 500);
+    }
+  }
+
+  document.addEventListener('input', function(e) {
+    if (e.target.classList.contains('qty-input-field')) {
+      let totalCents = 0;
+      document.querySelectorAll('.option-col').forEach(col => {
+        totalCents += (parseInt(col.dataset.price) || 0) * (parseInt(col.querySelector('input').value) || 0);
+      });
+      
+      const formatted = new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD' }).format(totalCents / 100);
+      
+      document.getElementById('display-total').innerText = formatted;
+      document.getElementById('floating-display-total').innerText = formatted;
+      document.getElementById('hidden-total-field').value = formatted;
+      
+      updateFormStatus(totalCents);
+
+      if (totalCents > 0) {
+        document.getElementById('globalFloatingBar').classList.add('is-active');
+      } else {
+        document.getElementById('globalFloatingBar').classList.remove('is-active');
+      }
+    }
+    if(e.target.closest('.field-group')) {
+        e.target.classList.remove('invalid');
+    }
+  });
+
+  function getOrderSummaryText() {
+    let details = "-------------------------------------------\n";
+    details += "🍱 NEW CATERING QUOTE RECEIVED\n";
+    details += "-------------------------------------------\n\n";
+    details += "👤 CUSTOMER DETAILS:\n";
+    details += "Name: " + document.getElementById('CateringName').value + "\n";
+    details += "Email: " + document.getElementById('CateringEmail').value + "\n";
+    details += "Phone: " + document.getElementById('CateringPhone').value + "\n";
+    details += "Address: " + document.getElementById('CateringAddress').value + "\n";
+    details += "Delivery Date: " + (document.getElementById('CateringDate').value || "Not Specified") + "\n\n";
+    
+    details += "🛒 SELECTED ITEMS:\n";
+    document.querySelectorAll('.qty-input-field').forEach(input => {
+      const qty = parseInt(input.value) || 0;
+      if (qty > 0) {
+        const itemName = input.closest('.catering-item-row').querySelector('h3').innerText;
+        const sizeLabel = input.closest('.option-col').querySelector('label').innerText.split('(')[0].trim();
+        details += `• ${itemName} (${sizeLabel}) x ${qty}\n`;
+      }
+    });
+    
+    details += "\n-------------------------------------------\n";
+    details += "💰 ESTIMATED TOTAL: " + document.getElementById('display-total').innerText + "\n";
+    details += "-------------------------------------------\n";
+    details += "\n💬 SPECIAL REQUESTS:\n" + (document.getElementById('CateringComments').value || "None");
+    
+    return details;
+  }
+
+  submitBtn.addEventListener('click', function(e) {
+    if (submitBtn.disabled) return;
+
+    const fields = [
+      { id: 'CateringName', valid: val => val.trim() !== "" },
+      { id: 'CateringEmail', valid: val => val.includes('@') },
+      { id: 'CateringPhone', valid: val => val.trim() !== "" },
+      { id: 'CateringAddress', valid: val => val.trim() !== "" },
+      { id: 'CateringDate', valid: val => val !== "" }
+    ];
+
+    let isFormValid = true;
+    fields.forEach(field => {
+      const input = document.getElementById(field.id);
+      if (!field.valid(input.value)) {
+        input.classList.add('invalid');
+        isFormValid = false;
+      } else {
+        input.classList.remove('invalid');
+      }
+    });
+
+    if (!isFormValid) return;
+
+    document.getElementById('HiddenEmailField').value = document.getElementById('CateringEmail').value;
+    document.getElementById('ContactForm-body-hidden').value = getOrderSummaryText();
+    
+    const nameInp = document.createElement('input');
+    nameInp.type = 'hidden'; nameInp.name = 'contact[Name]'; nameInp.value = document.getElementById('CateringName').value;
+    form.appendChild(nameInp);
+
+    submitBtn.innerText = 'SENDING QUOTE...';
+    form.submit();
+  });
+});
+</script>
+
+{% schema %}
+{
+  "name": "Catering Final V3 Pro",
+  "settings": [
+    { "type": "header", "content": "Section Layout" },
+    { "type": "range", "id": "padding_v", "label": "Vertical Padding", "min": 0, "max": 100, "step": 2, "default": 50 },
+    { "type": "range", "id": "padding_h", "label": "Horizontal Padding (Desktop)", "min": 0, "max": 200, "step": 4, "default": 100 },
+    { "type": "range", "id": "border_radius", "label": "Global Border Radius", "min": 0, "max": 40, "step": 1, "default": 8 },
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "primary_color", "label": "Main Accent (Buttons/Total)", "default": "#D74839" },
+    { "type": "color", "id": "secondary_color", "label": "Secondary Accent (Banners)", "default": "#FF840B" },
+    { "type": "color", "id": "outer_bg", "label": "Section Background", "default": "#fcfcfc" },
+    { "type": "color", "id": "card_bg", "label": "Cards Background", "default": "#ffffff" },
+    { "type": "header", "content": "Typography" },
+    { "type": "color", "id": "text_title_color", "label": "Titles Color", "default": "#333333" },
+    { "type": "color", "id": "price_color", "label": "Prices Color", "default": "#333333" },
+
+    { "type": "color", "id": "text_body_color", "label": "Body Text Color", "default": "#777777" },
+    { "type": "range", "id": "main_title_size", "label": "Main Title Font Size", "min": 20, "max": 80, "step": 2, "default": 32 },
+    { "type": "select", "id": "main_title_align", "label": "Main Title Alignment", "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ], "default": "left" }
+  ],
+  "blocks": [
+    { "type": "category", "name": "Category Header", "settings": [ { "type": "text", "id": "title", "label": "Title" } ] },
+    { "type": "product", "name": "Product (2 Sizes)", "settings": [
+        { "type": "text", "id": "product_name", "label": "Name" },
+        { "type": "textarea", "id": "description", "label": "Desc" },
+        { "type": "text", "id": "size_1_label", "label": "S1 Label" }, { "type": "text", "id": "size_1_desc", "label": "S1 Desc" }, { "type": "number", "id": "price_1", "label": "P1 Cents" },
+        { "type": "text", "id": "size_2_label", "label": "S2 Label" }, { "type": "text", "id": "size_2_desc", "label": "S2 Desc" }, { "type": "number", "id": "price_2", "label": "P2 Cents" }
+    ]}
+  ],
+  "presets": [{ "name": "Catering Final V3 Pro" }]
+}
+{% endschema %}

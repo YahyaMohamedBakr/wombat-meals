@@ -1,0 +1,46 @@
+<div class="auto-fb-section-{{ section.id }}" style="background: {{ section.settings.bg_color }}; padding: {{ section.settings.padding_v }}px 0;">
+  <div style="max-width: {{ section.settings.content_width }}px; margin: 0 auto; padding: 0 20px;">
+    
+    <div style="text-align: center; margin-bottom: 30px;">
+      <h2 style="color: {{ section.settings.title_color }}; font-size: {{ section.settings.title_size }}px;">{{ section.settings.title }}</h2>
+      <p style="color: #666;">HEALTHY FRESH AND FAST PACKED WITH FLAVOUR
+
+</p>
+    </div>
+
+    <div class="fb-feed-embed-wrapper">
+      {% if section.settings.embed_code != blank %}
+        {{ section.settings.embed_code }}
+      {% else %}
+        <div style="padding: 40px; border: 2px dashed #ccc; text-align: center;">
+<div class="sk-ww-facebook-page-posts" data-embed-id="25638819"></div><script src="https://widgets.sociablekit.com/facebook-page-posts/widget.js" defer></script>        </div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+
+<style>
+  .fb-feed-embed-wrapper {
+    width: 100%;
+    min-height: 500px;
+    overflow-x: hidden;
+  }
+  iframe { width: 100% !important; border: none !important; }
+</style>
+
+{% schema %}
+{
+  "name": "Auto Facebook Feed",
+  "settings": [
+    { "type": "textarea", "id": "embed_code", "label": "Embed Code (HTML/JS)", "info": "past sociablekit code here  visit https://www.sociablekit.com"},
+    { "type": "range", "id": "content_width", "label": "Width", "min": 800, "max": 1400, "step": 10, "default": 1200 },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#ffffff" },
+    { "type": "range", "id": "padding_v", "label": "Vertical Padding", "min": 0, "max": 100, "step": 5, "default": 50 },
+    { "type": "text", "id": "title", "label": "Title", "default": "Facebook Feed" },
+    { "type": "range", "id": "title_size", "label": "Title Font Size", "min": 20, "max": 60, "default": 32 },
+    { "type": "color", "id": "title_color", "label": "Title Color", "default": "#333333" }
+  ],
+  "presets": [{ "name": "Auto Facebook Feed" }]
+}
+{% endschema %}

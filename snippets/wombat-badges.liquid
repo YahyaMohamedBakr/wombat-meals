@@ -1,0 +1,75 @@
+{%- if product.metafields.nutrition.calories.value != blank or product.metafields.nutrition.protein_type.value != blank -%}
+  <div class="product-card-badges-container">
+    {%- if product.metafields.nutrition.calories.value != blank -%}
+      <div class="badge-v2 calories-v2">
+        <span class="b-icon">🔥</span>
+        <span class="b-text">{{ product.metafields.nutrition.calories.value }} kcal</span>
+      </div>
+    {%- endif -%}
+
+    {%- if product.metafields.nutrition.protein_type.value != blank -%}
+      {%- assign p_type_badge = product.metafields.nutrition.protein_type.value | downcase -%}
+      <div class="badge-v2 protein-v2">
+        <span class="b-icon">
+          {%- if p_type_badge contains 'chicken' -%} 🍗
+          {%- elsif p_type_badge contains 'beef' -%} 🥩
+          {%- elsif p_type_badge contains 'lamb' -%} 🐑
+          {%- elsif p_type_badge contains 'fish' -%} 🦈
+          {%- elsif p_type_badge contains 'vegan' -%} 🥗
+          {%- else -%} 🍱
+          {%- endif -%}
+        </span>
+        <span class="b-text">{{ product.metafields.nutrition.protein_type.value }}</span>
+      </div>
+    {%- endif -%}
+  </div>
+
+  <style>
+    .product-card-badges-container {
+      position: absolute;
+      top: 15px;
+      left: 15px; 
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 50; 
+      pointer-events: none;
+      width: fit-content;
+    }
+
+    .media-gallery, media-gallery {
+      position: relative !important;
+    }
+
+    .badge-v2 {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 40px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #000;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(4px); 
+      box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .b-icon { font-size: 22px; }
+
+    @media screen and (max-width: 749px) {
+      .product-card-badges-container { 
+        top: 10px; 
+        left: 10px; 
+      }
+      .badge-v2 { 
+        padding: 4px 10px; 
+        font-size: 9px; 
+      }
+
+      .b-icon { font-size: 11px; }
+    }
+  </style>
+{%- endif -%}

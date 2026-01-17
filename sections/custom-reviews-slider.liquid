@@ -1,0 +1,58 @@
+<link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
+<script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
+
+<div class="google-rev-{{ section.id }}" style="background-color: {{ section.settings.bg_color }}; padding: {{ section.settings.padding_v }}px 0;">
+  <div class="container-fixed" style="max-width: {{ section.settings.content_width }}px; margin: 0 auto; padding: 0 20px;">
+    
+    <div class="rev-header" style="text-align: center; margin-bottom: 50px;">
+      <span style="color: {{ section.settings.sub_color }}; text-transform: uppercase; letter-spacing: 1px; font-size: 14px; font-weight: 600;">{{ section.settings.sub_title }}</span>
+      <h2 style="color: {{ section.settings.title_color }}; font-size: {{ section.settings.title_size }}px; margin: 10px 0;">{{ section.settings.title }}</h2>
+      <p style="color: {{ section.settings.desc_color }}; max-width: 600px; margin: 0 auto; line-height: 1.6;">{{ section.settings.desc }}</p>
+    </div>
+
+    <div id="google-slider-{{ section.id }}" class="rev-slider">
+<script src="https://googlereviewswidget.dragonapps.io/public/widget.js"></script>
+<script src="https://googlereviewswidget.dragonapps.io/public/widget.js"></script>
+<dragonio-google-review-widget 
+  widget-type="google-review-carousel-1" 
+  variant="speech-bubble"
+  myshopify-domain="vsz8aq-1t.myshopify.com">
+</dragonio-google-review-widget>   </div>
+
+  </div>
+</div>
+
+
+
+<style>
+  .rev-slider:after { content: 'flickity'; display: none; }
+  .rev-cell { margin-bottom: 20px; }
+  .flickity-page-dots { bottom: -35px; }
+  .flickity-page-dots .dot { background: #333; }
+  .flickity-prev-next-button { background: rgba(0,0,0,0.4); width: 40px; height: 40px; color: #fff; }
+  .flickity-prev-next-button:hover { background: #000; }
+  @media screen and (max-width: 990px) { .rev-cell { width: 50% !important; } }
+  @media screen and (max-width: 768px) { .rev-cell { width: 100% !important; } }
+</style>
+
+{% schema %}
+{
+  "name": "Google Final Slider",
+  "settings": [
+    { "type": "text", "id": "api_key", "label": "Google API Key" },
+    { "type": "text", "id": "place_id", "label": "Place ID (starts with ChIJ)" },
+    { "type": "range", "id": "content_width", "label": "Content Width", "min": 800, "max": 1600, "step": 10, "default": 1200 },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#fbfbfb" },
+    { "type": "range", "id": "padding_v", "label": "Padding", "min": 0, "max": 150, "step": 5, "default": 80 },
+    { "type": "header", "content": "Text" },
+    { "type": "text", "id": "sub_title", "label": "Sub Title", "default": "Healthy Fresh and Fast" },
+    { "type": "color", "id": "sub_color", "label": "Sub Title Color", "default": "#a5bc93" },
+    { "type": "text", "id": "title", "label": "Main Title", "default": "What our Customers are saying" },
+    { "type": "range", "id": "title_size", "label": "Title Size", "min": 20, "max": 80, "default": 40 },
+    { "type": "color", "id": "title_color", "label": "Title Color", "default": "#333333" },
+    { "type": "textarea", "id": "desc", "label": "Description" },
+    { "type": "color", "id": "desc_color", "label": "Desc Color", "default": "#666666" }
+  ],
+  "presets": [{ "name": "Google Final Slider" }]
+}
+{% endschema %}

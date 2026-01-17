@@ -1,0 +1,121 @@
+<div class="custom-hero-{{ section.id }} hero-wrapper">
+  <div class="hero-inner-container">
+    <div class="hero-image-box">
+      {% if section.settings.image != blank %}
+        <img src="{{ section.settings.image | image_url: width: 2000 }}" alt="{{ section.settings.image.alt }}" class="hero-zoom-img">
+      {% else %}
+        {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+      {% endif %}
+      
+      <div class="hero-overlay" style="background: rgba(0,0,0, {{ section.settings.overlay_opacity | divided_by: 100.0 }});"></div>
+      
+      <div class="hero-content-box {{ section.settings.text_align }}">
+        <div class="page-width">
+          {% if section.settings.sub_title != blank %}
+            <span class="hero-sub">{{ section.settings.sub_title }}</span>
+          {% endif %}
+          
+          {% if section.settings.title != blank %}
+            <h2 class="hero-title">{{ section.settings.title }}</h2>
+          {% endif %}
+          
+          {% if section.settings.button_label != blank %}
+            <a href="{{ section.settings.button_link }}" class="hero-btn">{{ section.settings.button_label }}</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .custom-hero-{{ section.id }} {
+    margin: {{ section.settings.margin_top }}px 0 {{ section.settings.margin_bottom }}px;
+    overflow: hidden;
+  }
+  .hero-inner-container {
+    max-width: var(--page-content-width);
+    margin: 0 auto;
+    border-radius: {{ section.settings.border_radius }}px;
+    overflow: hidden;
+  }
+  .hero-image-box {
+    position: relative;
+    height: {{ section.settings.height_desktop }}px;
+    width: 100%;
+    overflow: hidden; 
+  }
+  .hero-zoom-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
+  }
+  .hero-image-box:hover .hero-zoom-img {
+    transform: scale(1.1); /* نسبة الزوم */
+  }
+  .hero-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 1;
+  }
+  .hero-content-box {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 2;
+    display: flex;
+    align-items: center; 
+    color: #ffffff;
+  }
+  .hero-content-box.left { justify-content: flex-start; text-align: left; }
+  .hero-content-box.center { justify-content: center; text-align: center; }
+  .hero-content-box.right { justify-content: flex-end; text-align: right; }
+
+  .hero-title { font-size: 3rem; margin: 10px 0 20px; color: #fff; font-weight: bold; }
+  .hero-sub { text-transform: uppercase; letter-spacing: 2px; font-size: 0.9rem; }
+  .hero-btn {
+    display: inline-block;
+    padding: 12px 35px;
+    background:{{section.settings.button_background_color}};
+    color: {{section.settings.button_text_color}};;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 4px;
+    transition: 0.3s;
+  }
+  .hero-btn:hover { background: #eee; transform: translateY(-3px); }
+
+  @media screen and (max-width: 768px) {
+    .hero-image-box { height: {{ section.settings.height_mobile }}px; }
+    .hero-title { font-size: 1.8rem; }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Custom Zoom Hero",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Background Image" },
+    { "type": "range", "id": "overlay_opacity", "label": "Overlay Darkenss", "min": 0, "max": 90, "step": 10, "default": 30, "unit": "%" },
+    { "type": "text", "id": "sub_title", "label": "Sub-title", "default": "New Collection" },
+    { "type": "text", "id": "title", "label": "Main Heading", "default": "Modern Interior Design" },
+    { "type": "select", "id": "text_align", "label": "Text Alignment", "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ], "default": "center" },
+    { "type": "text", "id": "button_label", "label": "Button Text", "default": "Shop Now" },
+    { "type": "color", "id": "button_text_color", "label": "Button Text Color", "default": "#fff" },
+    { "type": "color", "id": "button_background_color", "label": "Button Background Color", "default": "#f68512" },
+
+    { "type": "url", "id": "button_link", "label": "Button Link" },
+    { "type": "header", "content": "Dimensions" },
+    { "type": "range", "id": "height_desktop", "label": "Desktop Height", "min": 300, "max": 800, "step": 50, "default": 500, "unit": "px" },
+    { "type": "range", "id": "height_mobile", "label": "Mobile Height", "min": 200, "max": 600, "step": 50, "default": 350, "unit": "px" },
+    { "type": "range", "id": "border_radius", "label": "Rounded Corners", "min": 0, "max": 50, "step": 2, "default": 0, "unit": "px" },
+    { "type": "range", "id": "margin_top", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Top Margin", "default": 40 },
+    { "type": "range", "id": "margin_bottom", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Bottom Margin", "default": 40 }
+  ],
+  "presets": [{ "name": "Custom Zoom Hero" }]
+}
+{% endschema %}

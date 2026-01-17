@@ -1,0 +1,135 @@
+<div class="side-features-{{ section.id }} side-section-wrapper">
+  <div class="page-width side-inner-container">
+    
+    {% if section.settings.title != blank %}
+      <h2 class="side-heading">{{ section.settings.title }}</h2>
+    {% endif %}
+
+    <div class="side-features-grid">
+      {% for block in section.blocks %}
+        <div class="side-feature-item" {{ block.shopify_attributes }}>
+          
+          <div class="side-icon-box">
+            {% if block.settings.svg_code != blank %}
+              {{ block.settings.svg_code }}
+            {% else %}
+              <img src="{{ block.settings.image | image_url: width: 100 }}" alt="feature icon">
+            {% endif %}
+          </div>
+
+          <div class="side-text-box">
+            <h3>{{ block.settings.heading }}</h3>
+            <div class="side-desc">{{ block.settings.subheading }}</div>
+          </div>
+          
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<style>
+  .side-features-{{ section.id }} {
+    margin: {{ section.settings.margin_top }}px 0 {{ section.settings.margin_bottom }}px;
+    padding: 40px 0;
+    background: {{ section.settings.bg_color }};
+  }
+  .side-inner-container {
+    max-width: var(--custom-page-width) !important; 
+    margin: 0 auto;
+  }
+  .side-heading {
+    text-align: center;
+    margin-bottom: 50px;
+    font-size: 2.2rem;
+    font-weight: bold;
+  }
+  .side-features-grid {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.cols_desktop }}, 1fr);
+    gap: 40px 30px;
+  }
+  .side-feature-item {
+    display: flex;
+    align-items: flex-start; 
+    gap: 20px;
+  }
+  .side-icon-box {
+    flex-shrink: 0;
+    width: {{ section.settings.icon_size }}px;
+    height: {{ section.settings.icon_size }}px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: {{ section.settings.icon_color }};
+  }
+  .side-icon-box svg {
+    width: 100%;
+    height: 100%;
+    fill: currentColor; 
+  }
+  .side-icon-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .side-text-box h3 {
+    margin: 0 0 8px 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #222;
+  }
+  .side-text-box .side-desc {
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.5;
+  }
+
+  /* الموبايل */
+  @media screen and (max-width: 768px) {
+    .side-features-grid {
+      grid-template-columns: 1fr; 
+    }
+    .side-feature-item {
+      text-align: left;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Side Icon Features",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Section Heading", "default": "Our Services" },
+    { "type": "color", "id": "bg_color", "label": "Background Color", "default": "#ffffff" },
+    { "type": "color", "id": "icon_color", "label": "Icon Color", "default": "#000000" },
+    { "type": "range", "id": "cols_desktop", "label": "Columns per row", "min": 2, "max": 4, "step": 1, "default": 3 },
+    { "type": "range", "id": "icon_size", "label": "Icon Size", "min": 30, "max": 80, "step": 5, "default": 50, "unit": "px" },
+    { "type": "header", "content": "Spacing" },
+    { "type": "range", "id": "margin_top", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Top Margin", "default": 40 },
+    { "type": "range", "id": "margin_bottom", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Bottom Margin", "default": 40 }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature Item",
+      "settings": [
+        { "type": "html", "id": "svg_code", "label": "SVG Code", "info": "Paste your <svg> code here" },
+        { "type": "image_picker", "id": "image", "label": "Or use Image Icon" },
+        { "type": "text", "id": "heading", "label": "Title", "default": "High Quality" },
+        { "type": "textarea", "id": "subheading", "label": "Description", "default": "Detailed description of your awesome feature goes here." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Side Icon Features",
+      "blocks": [
+        { "type": "feature" },
+        { "type": "feature" },
+        { "type": "feature" }
+      ]
+    }
+  ]
+}
+{% endschema %}
