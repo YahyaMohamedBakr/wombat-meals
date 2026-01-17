@@ -36,7 +36,74 @@
     {% endif %}
 
     {{ content_for_header }}
-  {% include 'pagefly-app-header' %}</head>
+  {% include 'pagefly-app-header' %}
+
+
+  {% comment %} wompat {% endcomment %}
+  {% comment %} wompat - Elementor Style Control {% endcomment %}
+{% comment %} {%- style -%}
+      :root {
+        --custom-page-width: {{ settings.global_container_width }}px;
+      }
+
+      .header-wrapper, 
+      #header-group,
+      .footer, 
+      .footer-section, 
+      .announcement-bar,
+      .shopify-section {
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+
+      .header-wrapper .container,
+      .header-wrapper .page-width,
+      .footer .container,
+      .footer .page-width,
+      .announcement-bar .container,
+      main#MainContent .page-width, 
+      main#MainContent .container,
+      main#MainContent .section-container {
+        {% if settings.global_layout_type == 'boxed' %}
+          max-width: var(--custom-page-width) !important;
+          margin-left: auto !important;
+          margin-right: auto !important;
+          width: 90% !important; 
+        {% else %}
+          max-width: 100% !important;
+          width: 100% !important;
+        {% endif %}
+      }
+
+      @media screen and (max-width: 768px) {
+        .header-wrapper .container,
+        .footer .container,
+        main#MainContent .page-width,
+        main#MainContent .container {
+          max-width: 100% !important;
+          width: 100% !important;
+          padding-left: 20px !important;
+          padding-right: 20px !important;
+          margin: 0 !important;
+        }
+
+        .facets-vertical {
+          display: flex !important;
+          flex-direction: column !important;
+        }
+        .facets-wrapper {
+          width: 100% !important;
+          margin-bottom: 20px;
+        }
+        .product-grid-container {
+          width: 100% !important;
+        }
+      }
+    {%- endstyle -%} {% endcomment %}
+   {% comment %} wompat {% endcomment %}
+   {% comment %} wompat {% endcomment %}
+
+</head>
 
   <body class="page-width-{{ settings.page_width }} card-hover-effect-{{ settings.card_hover_effect }}">
     {% render 'skip-to-content-link', href: '#MainContent', text: 'accessibility.skip_to_text' %}

@@ -1382,6 +1382,37 @@
       }
     ]
   },
+
+  // {
+  //   "name": "Custom Layout Control",
+  //   "settings": [
+  //     {
+  //       "type": "header",
+  //       "content": "Master Layout Settings"
+  //     },
+  //     {
+  //       "type": "select",
+  //       "id": "global_layout_type",
+  //       "label": "Default Page Style",
+  //       "options": [
+  //         { "value": "full", "label": "Full Width" },
+  //         { "value": "boxed", "label": "Boxed" }
+  //       ],
+  //       "default": "boxed"
+  //     },
+  //     {
+  //       "type": "range",
+  //       "id": "global_container_width",
+  //       "label": "Master Container Width (px)",
+  //       "min": 800,
+  //       "max": 1600,
+  //       "step": 10,
+  //       "unit": "px",
+  //       "default": 1200
+  //     }
+  //   ]
+  // },
+  
   {
     "name": "t:names.animations",
     "settings": [

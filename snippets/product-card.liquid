@@ -111,6 +111,10 @@
       {% if block_settings.padding-block-end > 0 %}--zoom-out-padding-block-end: min(var(--padding-xs), {{ block_settings.padding-block-end | times: 0.7}}px);{% endif %}
     "
   >
+
+    {% comment %} wombat badges {% endcomment %}
+{% render 'wombat-badges', product: product %}
+{% comment %} end wombat badges {% endcomment %}
     {{ children }}
   </div>
 </product-card>

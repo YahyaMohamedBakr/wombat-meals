@@ -1,219 +1,215 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+{%- liquid 
+  assign layout_style = section.settings.layout_type
+  assign max_width = section.settings.custom_width
+  
+  if layout_style == 'theme_default'
+    assign layout_style = settings.global_layout_type
+    assign max_width = settings.global_container_width
+  endif
+-%}
 
+<aside class="wombat-custom-bar layout-{{ layout_style }}" 
+       style="--bar-bg: {{ section.settings.bar_bg }}; 
+              --border-bottom: {{ section.settings.divider_width }}px; 
+              --border-color: {{ section.settings.divider_color }};
+              --local-max-width: {{ max_width }}px;">
+  
+  <div class="bar-flex-container">
+    {%- for block in section.blocks -%}
+      <div class="bar-column column-{{ block.settings.alignment }}" {{ block.shopify_attributes }}
+           style="--text-color: {{ block.settings.text_color }}; --bg-color: {{ block.settings.bg_color }}; --font-size: {{ block.settings.font_size }}px; --border-radius: {{ block.settings.border_radius }}px; --padding: {{ block.settings.padding }}px; --b-width: {{ block.settings.b_width }}px; --b-color: {{ block.settings.b_color }}; --hover-color: {{ block.settings.hover_color }}; --sep-color: {{ block.settings.sep_color }}; --gap-links: {{ block.settings.gap_links }}px;">
+        
+        {%- case block.type -%}
+          {%- when 'text_item' -%}
+            <div class="item-wrapper">
+              {%- if block.settings.link != blank -%}<a href="{{ block.settings.link }}">{%- endif -%}
+                <div class="styled-box">
+                  {% if block.settings.icon != blank %}<span class="item-icon">{{ block.settings.icon }}</span>{% endif %}
+                  <span class="item-text">{{ block.settings.text }}</span>
+                </div>
+              {%- if block.settings.link != blank -%}</a>{%- endif -%}
+            </div>
 
-{% if section.blocks.size > 1 %}
-  <script
-    src="{{ 'announcement-bar.js' | asset_url }}"
-    type="module"
-    fetchpriority="low"
-  ></script>
-{% endif %}
-
-<div class="section-background color-{{ section.settings.color_scheme }}"></div>
-<aside
-  class="announcement-bar spacing-style section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }}"
-  style="{% render 'spacing-padding', settings: section.settings %}; --border-bottom-width: {{ section.settings.divider_width }}px;"
->
-  {% liquid
-    assign autoplay = false
-    assign show_arrows = false
-    if section.blocks.size > 1
-      assign autoplay = true
-      assign show_arrows = true
-    endif
-  %}
-
-  <announcement-bar-component
-    class="announcement-bar__slider"
-    {% if autoplay == true %}
-      autoplay="{{ section.settings.speed }}" aria-live="polite"
-    {% endif %}
-  >
-    {% if show_arrows %}
-      {% render 'slideshow-arrows', icon_style: 'chevron' %}
-    {% endif %}
-
-    <div class="announcement-bar__slides">
-      {% content_for 'blocks' %}
-    </div>
-  </announcement-bar-component>
+          {%- when 'menu_item' -%}
+            <nav class="item-nav">
+              {%- for i in (1..3) -%}
+                {%- capture label_key -%}link_{{ i }}_label{%- endcapture -%}
+                {%- capture url_key -%}link_{{ i }}_url{%- endcapture -%}
+                {%- capture icon_key -%}link_{{ i }}_icon{%- endcapture -%}
+                {%- if block.settings[label_key] != blank -%}
+                  {%- unless forloop.first -%}<div class="nav-separator">|</div>{%- endunless -%}
+                  <a href="{{ block.settings[url_key] }}" class="nav-link">
+                    {% if block.settings[icon_key] != blank %}<span class="nav-icon">{{ block.settings[icon_key] }}</span>{% endif %}
+                    {{ block.settings[label_key] }}
+                  </a>
+                {%- endif -%}
+              {%- endfor -%}
+            </nav>
+        {%- endcase -%}
+      </div>
+    {%- endfor -%}
+  </div>
 </aside>
 
 {% stylesheet %}
-  .announcement-bar {
-    border-block-end: var(--border-bottom-width) solid var(--color-border);
+  .wombat-custom-bar {
+    background-color: var(--bar-bg);
+    border-bottom: var(--border-bottom) solid var(--border-color);
+    padding: 10px 0;
+    width: 100%;
   }
 
-  .announcement-bar__slider {
+  .bar-flex-container {
     display: flex;
-    flex-direction: row;
+    justify-content: space-between;
     align-items: center;
-    position: relative;
-
-    @media screen and (max-width: 749px) {
-      grid-column: 1 / -1;
-    }
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    width: 100%;
   }
 
-  .announcement-bar__slides {
-    display: grid;
-    grid: [stack] auto / [stack] auto;
-    width: calc(100% - var(--button-size) * 2);
-    max-width: 680px;
-    margin-inline: auto;
+  .layout-boxed .bar-flex-container {
+    max-width: var(--local-max-width);
   }
 
-  .announcement-bar__slides > * {
-    grid-area: stack;
+  
+  .layout-full .bar-flex-container {
+    max-width: 100%;
   }
 
-  .announcement-bar__slide {
-    transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+  
+  .bar-column { flex: 1; display: flex; font-size: var(--font-size); color: var(--text-color); align-items: center; }
+  .column-left { justify-content: flex-start; }
+  .column-center { justify-content: center; }
+  .column-right { justify-content: flex-end; }
+  .styled-box { background-color: var(--bg-color); padding: var(--padding) calc(var(--padding) * 2.5); border-radius: var(--border-radius); border: var(--b-width) solid var(--b-color); display: flex; align-items: center; gap: 8px; font-weight: 700; transition: all 0.3s ease; }
+  .nav-link { text-decoration: none; color: inherit; display: flex; align-items: center; gap: 6px; font-weight: 600; transition: color 0.3s ease; }
+  .nav-link:hover { color: var(--hover-color); }
+  .item-nav { display: flex; align-items: center; gap: var(--gap-links); }
 
-    &[aria-hidden='true'] {
-      opacity: 0;
-      visibility: hidden;
-    }
+  @media screen and (max-width: 749px) {
+    .bar-flex-container { flex-direction: column; gap: 10px; padding: 10px; }
+    .bar-column { justify-content: center; width: 100%; }
+    .nav-separator { display: none; }
   }
 
-  .announcement-bar__slider slideshow-arrows {
-    padding: 0;
-    mix-blend-mode: normal;
-  }
 
-  .announcement-bar__slider slideshow-arrows .slideshow-control {
-    color: var(--color-foreground);
-  }
-
-  .announcement-bar__slider .slideshow-control {
-    display: flex;
-    padding: 0;
-    width: var(--button-size);
-    height: var(--button-size);
-    align-items: center;
-    justify-content: center;
-    opacity: 1;
-    animation: none;
-
-    @media screen and (min-width: 750px) {
-      --slideshow-control-offset: calc((var(--button-size) - var(--icon-size-xs)) / 2);
-
-      .section--page-width &.slideshow-control--previous {
-        transform: translateX(var(--slideshow-control-offset));
-      }
-    }
-  }
-
-  .announcement-bar__slider .slideshow-control .svg-wrapper {
-    width: var(--icon-size-xs);
-    height: var(--icon-size-xs);
-  }
-
-  .announcement-bar__slide {
-    place-content: center;
-  }
-
-  .announcement-bar__text:first-child {
-    margin: 0;
-  }
-
-  .announcement-bar__link {
-    position: absolute;
-    inset: 0;
-  }
+  
 {% endstylesheet %}
+<style>
+  
+  #shopify-section-{{ section.id }} .wombat-custom-bar {
+    background-color: {{ section.settings.bar_bg }};
+    border-bottom: {{ section.settings.divider_width }}px solid {{ section.settings.divider_color }};
+    padding: 10px 0;
+    width: 100% !important;
+    display: block !important;
+  }
 
+  
+  #shopify-section-{{ section.id }} .bar-flex-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 auto !important;
+    padding: 0 1.5rem;
+    width: 100% !important;
+    
+    {% if layout_style == 'full' %}
+      max-width: 100% !important;
+    {% else %}
+      
+      max-width: {{ max_width }}px !important; 
+    {% endif %}
+  }
+
+  
+  #shopify-section-{{ section.id }} .bar-column {
+    flex: 1;
+    display: flex;
+    align-items: center;
+  }
+</style>
 {% schema %}
 {
-  "name": "t:names.announcement_bar",
-  "blocks": [
-    {
-      "type": "_announcement"
-    }
-  ],
-  "enabled_on": {
-    "groups": ["header"]
-  },
+  "name": "Wombat Pro Bar V2",
   "settings": [
     {
-      "type": "range",
-      "id": "speed",
-      "label": "t:settings.scroll_speed",
-      "min": 2,
-      "max": 10,
-      "default": 5,
-      "unit": "sec"
-    },
-    {
       "type": "header",
-      "content": "t:content.appearance"
+      "content": "Layout Settings (Special)"
     },
     {
       "type": "select",
-      "id": "section_width",
-      "label": "t:settings.section_width",
+      "id": "layout_type",
+      "label": "Section Layout",
       "options": [
-        {
-          "value": "page-width",
-          "label": "t:options.page"
-        },
-        {
-          "value": "full-width",
-          "label": "t:options.full"
-        }
+        { "value": "theme_default", "label": "Theme Default" },
+        { "value": "boxed", "label": "Custom Boxed" },
+        { "value": "full", "label": "Full Width" }
       ],
-      "default": "page-width"
-    },
-    {
-      "type": "color_scheme",
-      "id": "color_scheme",
-      "default": "scheme-4",
-      "label": "t:settings.color_scheme"
+      "default": "theme_default"
     },
     {
       "type": "range",
-      "id": "divider_width",
-      "label": "t:settings.divider_thickness",
-      "min": 0,
-      "max": 5,
-      "step": 0.5,
+      "id": "custom_width",
+      "label": "Custom Boxed Width",
+      "min": 800,
+      "max": 1600,
+      "step": 10,
       "unit": "px",
-      "default": 0
+      "default": 1200,
+      "info": "Only applies if 'Custom Boxed' is selected."
+    },
+    { "type": "header", "content": "Colors & Borders" },
+    { "type": "color", "id": "bar_bg", "label": "Bar Background", "default": "#b06d4d" },
+    { "type": "color", "id": "divider_color", "label": "Bottom Border Color", "default": "#ffffff" },
+    { "type": "range", "id": "divider_width", "label": "Bottom Border Thickness", "min": 0, "max": 5, "default": 0 }
+  ],
+  "blocks": [
+    {
+      "type": "text_item",
+      "name": "Styled Box (Center)",
+      "settings": [
+        { "type": "inline_richtext", "id": "text", "label": "Text", "default": "ORDER BEFORE 8AM" },
+        { "type": "text", "id": "icon", "label": "Icon" },
+        { "type": "url", "id": "link", "label": "Link" },
+        { "type": "header", "content": "Styling" },
+        { "type": "color", "id": "text_color", "label": "Text Color", "default": "#b06d4d" },
+        { "type": "color", "id": "hover_color", "label": "Hover Color", "default": "#8a4f32" },
+        { "type": "color", "id": "bg_color", "label": "Box Background", "default": "#ffffff" },
+        { "type": "range", "id": "font_size", "label": "Font Size", "min": 8, "max": 20, "default": 12 },
+        { "type": "range", "id": "border_radius", "label": "Corner Radius", "min": 0, "max": 50, "default": 30 },
+        { "type": "range", "id": "padding", "label": "Internal Padding", "min": 2, "max": 20, "default": 8 },
+        { "type": "range", "id": "b_width", "label": "Box Border Thickness", "min": 0, "max": 5, "default": 0 },
+        { "type": "color", "id": "b_color", "label": "Box Border Color", "default": "#000000" },
+        { "type": "select", "id": "alignment", "label": "Position", "options": [{"value":"left","label":"Left"},{"value":"center","label":"Center"},{"value":"right","label":"Right"}], "default": "center" }
+      ]
     },
     {
-      "type": "header",
-      "content": "t:content.padding"
-    },
-    {
-      "type": "range",
-      "id": "padding-block-start",
-      "label": "t:settings.top",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "px",
-      "default": 15
-    },
-    {
-      "type": "range",
-      "id": "padding-block-end",
-      "label": "t:settings.bottom",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "px",
-      "default": 15
+      "type": "menu_item",
+      "name": "Icon Links (Right)",
+      "settings": [
+        { "type": "header", "content": "Links" },
+        { "type": "text", "id": "link_1_label", "label": "L1 Label", "default": "Delivery" },
+        { "type": "url", "id": "link_1_url", "label": "L1 URL" },
+        { "type": "html", "id": "link_1_icon", "label": "L1 Icon", "default": "🚚" },
+        { "type": "text", "id": "link_2_label", "label": "L2 Label", "default": "FAQ" },
+        { "type": "url", "id": "link_2_url", "label": "L2 URL" },
+        { "type": "html", "id": "link_2_icon", "label": "L2 Icon", "default": "❓" },
+        { "type": "text", "id": "link_3_label", "label": "L3 Label", "default": "How it works" },
+        { "type": "url", "id": "link_3_url", "label": "L3 URL" },
+        { "type": "html", "id": "link_3_icon", "label": "L3 Icon", "default": "ℹ️" },
+        { "type": "header", "content": "Styling" },
+        { "type": "color", "id": "text_color", "label": "Links Color", "default": "#ffffff" },
+        { "type": "color", "id": "hover_color", "label": "Hover Color", "default": "#d1d1d1" },
+        { "type": "color", "id": "sep_color", "label": "Separator Color", "default": "#ffffff" },
+        { "type": "range", "id": "gap_links", "label": "Gap between links", "min": 5, "max": 40, "default": 20 },
+        { "type": "range", "id": "font_size", "label": "Font Size", "min": 8, "max": 20, "default": 11 },
+        { "type": "select", "id": "alignment", "label": "Position", "options": [{"value":"left","label":"Left"},{"value":"center","label":"Center"},{"value":"right","label":"Right"}], "default": "right" }
+      ]
     }
   ],
-  "presets": [
-    {
-      "name": "t:names.announcement_bar",
-      "blocks": {
-        "announcement_1": {
-          "type": "_announcement"
-        }
-      },
-      "block_order": ["announcement_1"]
-    }
-  ]
+  "presets": [{ "name": "Wombat Master Bar Pro" }]
 }
 {% endschema %}

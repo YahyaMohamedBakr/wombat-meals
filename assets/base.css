@@ -408,7 +408,8 @@ p:empty {
 .page-width-narrow,
 .page-width-content {
   /* NOTE: This results in a page width of 1400px because of how we set up margins with grid */
-  --page-content-width: var(--narrow-page-width);
+  --page-content-width: 1200px;
+  /* var(--narrow-page-width); */
   --page-width: calc(var(--page-content-width) + (var(--page-margin) * 2));
 }
 
@@ -1436,7 +1437,8 @@ input:not(:placeholder-shown)::placeholder {
 .button,
 button.shopify-payment-button__button--unbranded {
   --button-color: var(--color-primary-button-text);
-  --button-background-color: var(--color-primary-button-background);
+  --button-background-color:#ff840b;
+   /* var(--color-primary-button-background); */
   --button-border-color: var(--color-primary-button-border);
   --button-border-width: var(--style-border-width-primary);
 }
@@ -1444,7 +1446,8 @@ button.shopify-payment-button__button--unbranded {
 .button:hover,
 button.shopify-payment-button__button--unbranded:hover:not([disabled]) {
   --button-color: var(--color-primary-button-hover-text);
-  --button-background-color: var(--color-primary-button-hover-background);
+  --button-background-color: #d74839;
+   /* var(--color-primary-button-hover-background); */
   --button-border-color: var(--color-primary-button-hover-border);
 }
 
@@ -4037,3 +4040,7 @@ text-component {
     font-size: max(1rem, 100%);
   }
 }
+
+
+
+/*  wombat edits */
